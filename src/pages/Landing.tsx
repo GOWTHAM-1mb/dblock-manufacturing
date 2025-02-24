@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -136,9 +135,9 @@ export default function Landing() {
             <div className="relative">
               <div className="absolute -inset-4 bg-primary/5 rounded-full blur-3xl" />
               <img
-                src="/placeholder.svg"
-                alt="CNC Machine"
-                className="relative z-10 w-full h-auto rounded-lg shadow-2xl animate-float"
+                src="https://images.unsplash.com/photo-1518770660439-4636190af475"
+                alt="High-precision CNC Machined Part"
+                className="relative z-10 w-full h-auto rounded-lg shadow-2xl animate-float object-cover"
               />
             </div>
           </div>
