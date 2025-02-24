@@ -11,8 +11,8 @@ import { supabase } from "./integrations/supabase/client";
 import { AccountSettings } from "./pages/account-settings";
 import Dashboard from "@/pages/Dashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import ViewOrders from "@/pages/ViewOrders";
-import ViewQuotes from "@/pages/ViewQuotes";
+import ViewOrders from "@/pages/view-orders";
+import ViewQuotes from "@/pages/view-quotes";
 
 export default function App() {
   return (
