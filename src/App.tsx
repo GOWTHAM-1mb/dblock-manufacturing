@@ -22,6 +22,7 @@ export default function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Index />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<Navigate to="/login" replace />} />
 
         {/* Protected Routes */}
         <Route
@@ -61,6 +62,22 @@ export default function App() {
           element={
             <ProtectedRoute>
               <ViewOrders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders/:orderId"
+          element={
+            <ProtectedRoute>
+              <Navigate to="/orders" replace />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/account"
+          element={
+            <ProtectedRoute>
+              <AccountSettings />
             </ProtectedRoute>
           }
         />

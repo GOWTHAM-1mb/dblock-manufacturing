@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { signUp } from "@/lib/auth";
 
 const Signup = () => {
@@ -69,7 +69,7 @@ const Signup = () => {
         title: "Success",
         description: "Please check your email to verify your account",
       });
-      navigate("/");
+      navigate("/login");
     } catch (error: any) {
       toast({
         title: "Error",
@@ -186,9 +186,9 @@ const Signup = () => {
 
           <div className="text-center text-sm text-gray-600">
             Already have an account?{" "}
-            <a href="/" className="text-navy hover:underline font-medium">
+            <Link to="/login" className="text-navy hover:underline font-medium">
               Sign in
-            </a>
+            </Link>
           </div>
         </div>
       </div>
