@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Building2, Mail, User, MapPin, CalendarDays } from "lucide-react";
+import { Building2, Mail, User, CalendarDays } from "lucide-react";
+import { Json } from "@/integrations/supabase/types";
 
 interface Address {
   line1: string;
@@ -20,32 +21,28 @@ interface Address {
 interface Profile {
   id: string;
   full_name: string;
-  company_name: string;
+  company_name: string | null;
   created_at: string;
-  shipping_address: Address;
-  billing_address: Address;
+  shipping_address: Address | null;
+  billing_address: Address | null;
+  updated_at: string | null;
 }
+
+const emptyAddress: Address = {
+  line1: "",
+  line2: "",
+  city: "",
+  state: "",
+  postalCode: "",
+  country: "",
+};
 
 const AccountSettings = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [shippingAddress, setShippingAddress] = useState<Address>({
-    line1: "",
-    line2: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-  });
-  const [billingAddress, setBillingAddress] = useState<Address>({
-    line1: "",
-    line2: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "",
-  });
+  const [shippingAddress, setShippingAddress] = useState<Address>(emptyAddress);
+  const [billingAddress, setBillingAddress] = useState<Address>(emptyAddress);
 
   useEffect(() => {
     fetchProfile();
@@ -64,9 +61,23 @@ const AccountSettings = () => {
 
       if (error) throw error;
 
-      setProfile(data);
-      if (data.shipping_address) setShippingAddress(data.shipping_address);
-      if (data.billing_address) setBillingAddress(data.billing_address);
+      const profileData: Profile = {
+        id: data.id,
+        full_name: data.full_name,
+        company_name: data.company_name,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+        shipping_address: data.shipping_address as Address | null,
+        billing_address: data.billing_address as Address | null,
+      };
+
+      setProfile(profileData);
+      if (profileData.shipping_address) {
+        setShippingAddress(profileData.shipping_address);
+      }
+      if (profileData.billing_address) {
+        setBillingAddress(profileData.billing_address);
+      }
     } catch (error: any) {
       toast({
         title: "Error",
@@ -103,8 +114,8 @@ const AccountSettings = () => {
       const { error } = await supabase
         .from("profiles")
         .update({
-          shipping_address: shippingAddress,
-          billing_address: billingAddress,
+          shipping_address: shippingAddress as unknown as Json,
+          billing_address: billingAddress as unknown as Json,
         })
         .eq("id", profile?.id);
 
@@ -222,7 +233,7 @@ const AccountSettings = () => {
                   <Building2 className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-sm text-gray-500">Company Name</p>
-                    <p className="font-medium">{profile.company_name}</p>
+                    <p className="font-medium">{profile.company_name || "Not set"}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">

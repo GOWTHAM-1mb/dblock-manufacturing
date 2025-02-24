@@ -1,32 +1,30 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type SignUpData = {
+interface SignUpData {
   email: string;
   password: string;
   fullName: string;
-};
+  companyName: string;
+}
 
 export type SignInData = {
   email: string;
   password: string;
 };
 
-export const signUp = async ({ email, password, fullName }: SignUpData) => {
+export const signUp = async ({ email, password, fullName, companyName }: SignUpData) => {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: {
         full_name: fullName,
+        company_name: companyName,
       },
-      emailRedirectTo: `${window.location.origin}/auth/callback`,
     },
   });
 
-  if (error) {
-    throw error;
-  }
-
+  if (error) throw error;
   return data;
 };
 
