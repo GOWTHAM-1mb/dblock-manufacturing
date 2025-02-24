@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Mail, Lock, User } from "lucide-react";
+import { Mail, Lock, User, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +15,7 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    companyName: "",
   });
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.fullName || !formData.email || !formData.password) {
+    if (!formData.fullName || !formData.email || !formData.password || !formData.companyName) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -62,6 +63,7 @@ const Signup = () => {
         email: formData.email,
         password: formData.password,
         fullName: formData.fullName,
+        companyName: formData.companyName,
       });
       toast({
         title: "Success",
@@ -104,6 +106,21 @@ const Signup = () => {
                     className="pl-10"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="companyName">Company Name</Label>
+                <div className="relative">
+                  <Building2 className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                  <Input
+                    id="companyName"
+                    placeholder="Enter your company name"
+                    className="pl-10"
+                    value={formData.companyName}
+                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
                     required
                   />
                 </div>

@@ -126,21 +126,30 @@ export type Database = {
       }
       profiles: {
         Row: {
+          billing_address: Json | null
+          company_name: string | null
           created_at: string | null
           full_name: string | null
           id: string
+          shipping_address: Json | null
           updated_at: string | null
         }
         Insert: {
+          billing_address?: Json | null
+          company_name?: string | null
           created_at?: string | null
           full_name?: string | null
           id: string
+          shipping_address?: Json | null
           updated_at?: string | null
         }
         Update: {
+          billing_address?: Json | null
+          company_name?: string | null
           created_at?: string | null
           full_name?: string | null
           id?: string
+          shipping_address?: Json | null
           updated_at?: string | null
         }
         Relationships: []

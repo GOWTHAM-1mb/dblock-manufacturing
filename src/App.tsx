@@ -13,6 +13,7 @@ import SubmitRFQ from "./pages/submit-rfq";
 import ViewQuotes from "./pages/view-quotes";
 import ViewOrders from "./pages/view-orders";
 import OrderDetails from "./pages/order-details";
+import AccountSettings from "./pages/account-settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -42,6 +43,7 @@ const App: React.FC = () => {
               <Route path="/quotes" element={<Navigate to="/view-quotes" replace />} />
               <Route path="/orders" element={<ViewOrders />} />
               <Route path="/orders/:orderId" element={<OrderDetails />} />
+              <Route path="/account-settings" element={<AccountSettings />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
