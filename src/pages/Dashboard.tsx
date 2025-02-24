@@ -17,7 +17,7 @@ const Dashboard = () => {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [userName, setUserName] = useState("");
-  const { data: metrics } = useDashboardMetrics();
+  const { data: metrics, isLoading } = useDashboardMetrics();
 
   const { data: profile } = useQuery<Profile | null>({
     queryKey: ['profile'],
@@ -74,6 +74,14 @@ const Dashboard = () => {
     };
   }, [queryClient]);
 
+  // Default metrics while loading
+  const defaultMetrics = {
+    totalRfqs: 0,
+    activeQuotes: 0,
+    ordersInProgress: 0,
+    completedOrders: 0
+  };
+
   return (
     <AuthenticatedLayout>
       <div className="space-y-6 p-6">
@@ -83,7 +91,7 @@ const Dashboard = () => {
           </h1>
           <SearchBar value={searchQuery} onChange={setSearchQuery} />
         </div>
-        <DashboardMetrics metrics={metrics} />
+        <DashboardMetrics metrics={metrics || defaultMetrics} />
       </div>
     </AuthenticatedLayout>
   );
