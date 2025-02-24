@@ -5,26 +5,59 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import { signIn, signInWithGoogle } from "@/lib/auth";
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Login Attempted",
-      description: "This is a demo. Authentication will be implemented in the next phase.",
-    });
+    
+    if (!email || !password) {
+      toast({
+        title: "Error",
+        description: "Please fill in all fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await signIn({ email, password });
+      toast({
+        title: "Success",
+        description: "Welcome back!",
+      });
+      navigate("/dashboard");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    toast({
-      title: "Google Login",
-      description: "Google authentication will be implemented in the next phase.",
-    });
+  const handleGoogleLogin = async () => {
+    try {
+      await signInWithGoogle();
+      // The redirect will be handled by Supabase
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -99,8 +132,9 @@ const Index = () => {
             <Button
               type="submit"
               className="w-full bg-navy hover:bg-navy-dark transition-colors"
+              disabled={isLoading}
             >
-              Sign in
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </form>
 
@@ -142,7 +176,7 @@ const Index = () => {
 
           <div className="text-center text-sm text-gray-600">
             Don't have an account?{" "}
-            <a href="#" className="text-navy hover:underline font-medium">
+            <a href="/signup" className="text-navy hover:underline font-medium">
               Sign up
             </a>
           </div>
