@@ -135,9 +135,9 @@ export default function Landing() {
             <div className="relative">
               <div className="absolute -inset-4 bg-primary/5 rounded-full blur-3xl" />
               <img
-                src="https://images.unsplash.com/photo-1518770660439-4636190af475"
-                alt="High-precision CNC Machined Part"
-                className="relative z-10 w-full h-auto rounded-lg shadow-2xl animate-float object-cover"
+                src="/lovable-uploads/e738f20b-859c-4235-bd06-16b86ec7d34f.png"
+                alt="CNC Machine in Action with Sparks"
+                className="relative z-10 w-full h-[400px] rounded-lg shadow-2xl animate-float object-cover"
               />
             </div>
           </div>
