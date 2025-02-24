@@ -160,18 +160,21 @@ export type Database = {
           id: string
           quoted_price: number
           rfq_id: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           id?: string
           quoted_price: number
           rfq_id: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           id?: string
           quoted_price?: number
           rfq_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload, Quote, Package, Check, Search } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 
 interface DashboardMetrics {
   totalRfqs: number;
@@ -18,94 +19,92 @@ interface DashboardMetrics {
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [metrics, setMetrics] = useState<DashboardMetrics>({
-    totalRfqs: 0,
-    activeQuotes: 0,
-    ordersInProgress: 0,
-    completedOrders: 0
-  });
   const [searchQuery, setSearchQuery] = useState("");
   const [userName, setUserName] = useState("");
 
-  useEffect(() => {
-    fetchUserProfile();
-    fetchMetrics();
-    setupRealtimeSubscription();
-  }, []);
-
-  const fetchUserProfile = async () => {
-    try {
+  // Profile query with caching
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      const { data: profile, error } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .select("full_name")
         .eq("id", user.id)
         .single();
 
       if (error) throw error;
-      setUserName(profile.full_name);
-    } catch (error: any) {
+      return data;
+    },
+    onSuccess: (data) => {
+      setUserName(data?.full_name || '');
+    },
+    onError: () => {
       toast({
         title: "Error",
         description: "Failed to load user profile",
         variant: "destructive",
       });
     }
-  };
+  });
 
-  const fetchMetrics = async () => {
-    try {
+  // Metrics query with caching
+  const { data: metrics = {
+    totalRfqs: 0,
+    activeQuotes: 0,
+    ordersInProgress: 0,
+    completedOrders: 0
+  } } = useQuery({
+    queryKey: ['dashboard-metrics'],
+    queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      // Using explicit type annotations for count queries
-      type CountQueryResult = { count: number | null };
+      // Optimized count queries using parallel execution
+      const [rfqsResult, quotesResult, inProgressResult, completedResult] = await Promise.all([
+        // Count RFQs
+        supabase
+          .from("rfqs")
+          .select("id", { count: 'exact' })
+          .eq("user_id", user.id),
+        
+        // Count active quotes
+        supabase
+          .from("quotes")
+          .select("id", { count: 'exact' })
+          .eq("user_id", user.id)
+          .in("status", ["pending", "quoted"]),
 
-      // Fetch total RFQs
-      const rfqsResult = await supabase
-        .from("rfqs")
-        .select("*", { count: 'exact' })
-        .eq("user_id", user.id);
-      
-      // Fetch active quotes
-      const quotesResult = await supabase
-        .from("quotes")
-        .select("*", { count: 'exact' })
-        .eq("user_id", user.id)
-        .in("status", ["pending", "quoted"]);
+        // Count orders in progress
+        supabase
+          .from("orders")
+          .select("id", { count: 'exact' })
+          .eq("user_id", user.id)
+          .in("status", ["pending", "working"]),
 
-      // Fetch orders in progress
-      const inProgressResult = await supabase
-        .from("orders")
-        .select("*", { count: 'exact' })
-        .eq("user_id", user.id)
-        .in("status", ["pending", "working"]);
+        // Count completed orders
+        supabase
+          .from("orders")
+          .select("id", { count: 'exact' })
+          .eq("user_id", user.id)
+          .eq("status", "complete")
+      ]);
 
-      // Fetch completed orders
-      const completedResult = await supabase
-        .from("orders")
-        .select("*", { count: 'exact' })
-        .eq("user_id", user.id)
-        .eq("status", "complete");
-
-      setMetrics({
+      return {
         totalRfqs: rfqsResult.count || 0,
         activeQuotes: quotesResult.count || 0,
         ordersInProgress: inProgressResult.count || 0,
         completedOrders: completedResult.count || 0
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: "Failed to load dashboard metrics",
-        variant: "destructive",
-      });
-    }
-  };
+      };
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
+    staleTime: 10000, // Consider data fresh for 10 seconds
+  });
 
-  const setupRealtimeSubscription = () => {
+  // Set up realtime subscription for live updates
+  useEffect(() => {
     const channel = supabase
       .channel('dashboard-changes')
       .on('postgres_changes', { 
@@ -113,21 +112,22 @@ const Dashboard = () => {
         schema: 'public',
         table: 'orders'
       }, () => {
-        fetchMetrics();
+        // Invalidate the metrics query to trigger a refresh
+        void queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
       })
       .on('postgres_changes', { 
         event: '*', 
         schema: 'public',
         table: 'quotes'
       }, () => {
-        fetchMetrics();
+        void queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
       })
       .subscribe();
 
     return () => {
       supabase.removeChannel(channel);
     };
-  };
+  }, []);
 
   const MetricCard = ({ 
     title, 
