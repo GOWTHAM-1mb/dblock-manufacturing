@@ -41,7 +41,7 @@ export const DashboardMetrics = ({ metrics }: DashboardMetricsProps) => {
         title="Completed Orders"
         value={metrics.completedOrders}
         icon={Check}
-        onClick={() => navigate("/orders?status=complete")}
+        onClick={() => navigate("/orders")}
       />
     </div>
   );

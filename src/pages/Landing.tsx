@@ -76,6 +76,11 @@ export default function Landing() {
                   Submit an RFQ
                 </Button>
               </Link>
+              <Link to="/login">
+                <Button variant="outline" className="text-white border-white hover:bg-white/10">
+                  Sign In
+                </Button>
+              </Link>
             </div>
 
             {/* Mobile Menu Button */}

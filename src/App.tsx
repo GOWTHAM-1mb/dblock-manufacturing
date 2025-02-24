@@ -11,6 +11,8 @@ import { supabase } from "./integrations/supabase/client";
 import { AccountSettings } from "./pages/account-settings";
 import Dashboard from "@/pages/Dashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import ViewOrders from "@/pages/ViewOrders";
+import ViewQuotes from "@/pages/ViewQuotes";
 
 export default function App() {
   return (
@@ -50,7 +52,7 @@ export default function App() {
           path="/quotes"
           element={
             <ProtectedRoute>
-              <Navigate to="/dashboard" replace />
+              <ViewQuotes />
             </ProtectedRoute>
           }
         />
@@ -58,7 +60,7 @@ export default function App() {
           path="/orders"
           element={
             <ProtectedRoute>
-              <Navigate to="/dashboard" replace />
+              <ViewOrders />
             </ProtectedRoute>
           }
         />
