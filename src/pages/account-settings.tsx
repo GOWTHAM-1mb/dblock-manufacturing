@@ -37,6 +37,19 @@ const emptyAddress: Address = {
   country: "",
 };
 
+const isValidAddress = (address: unknown): address is Address => {
+  if (!address || typeof address !== 'object') return false;
+  const a = address as Record<string, unknown>;
+  return (
+    typeof a.line1 === 'string' &&
+    typeof a.line2 === 'string' &&
+    typeof a.city === 'string' &&
+    typeof a.state === 'string' &&
+    typeof a.postalCode === 'string' &&
+    typeof a.country === 'string'
+  );
+};
+
 const AccountSettings = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -67,8 +80,8 @@ const AccountSettings = () => {
         company_name: data.company_name,
         created_at: data.created_at,
         updated_at: data.updated_at,
-        shipping_address: data.shipping_address as Address | null,
-        billing_address: data.billing_address as Address | null,
+        shipping_address: isValidAddress(data.shipping_address) ? data.shipping_address : null,
+        billing_address: isValidAddress(data.billing_address) ? data.billing_address : null,
       };
 
       setProfile(profileData);
