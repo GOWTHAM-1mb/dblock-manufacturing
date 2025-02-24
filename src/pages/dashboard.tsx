@@ -9,12 +9,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { Upload, Quote, Package, Check, Search } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
+// Define explicit types for our data structures
+interface Profile {
+  full_name: string | null;
+}
+
 interface DashboardMetrics {
   totalRfqs: number;
   activeQuotes: number;
   ordersInProgress: number;
   completedOrders: number;
 }
+
+// Define default metrics state
+const defaultMetrics: DashboardMetrics = {
+  totalRfqs: 0,
+  activeQuotes: 0,
+  ordersInProgress: 0,
+  completedOrders: 0
+};
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -23,8 +36,8 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [userName, setUserName] = useState("");
 
-  // Profile query with caching
-  const { data: profile } = useQuery({
+  // Profile query with explicit typing
+  const { data: profile } = useQuery<Profile | null, Error>({
     queryKey: ['profile'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -55,13 +68,8 @@ const Dashboard = () => {
     }
   });
 
-  // Metrics query with caching
-  const { data: metrics = {
-    totalRfqs: 0,
-    activeQuotes: 0,
-    ordersInProgress: 0,
-    completedOrders: 0
-  } } = useQuery({
+  // Metrics query with explicit typing
+  const { data: metrics = defaultMetrics } = useQuery<DashboardMetrics, Error>({
     queryKey: ['dashboard-metrics'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -69,27 +77,23 @@ const Dashboard = () => {
 
       // Optimized count queries using parallel execution
       const [rfqsResult, quotesResult, inProgressResult, completedResult] = await Promise.all([
-        // Count RFQs
         supabase
           .from("rfqs")
           .select("id", { count: 'exact' })
           .eq("user_id", user.id),
         
-        // Count active quotes
         supabase
           .from("quotes")
           .select("id", { count: 'exact' })
           .eq("user_id", user.id)
           .in("status", ["pending", "quoted"]),
 
-        // Count orders in progress
         supabase
           .from("orders")
           .select("id", { count: 'exact' })
           .eq("user_id", user.id)
           .in("status", ["pending", "working"]),
 
-        // Count completed orders
         supabase
           .from("orders")
           .select("id", { count: 'exact' })
@@ -102,10 +106,10 @@ const Dashboard = () => {
         activeQuotes: quotesResult.count || 0,
         ordersInProgress: inProgressResult.count || 0,
         completedOrders: completedResult.count || 0
-      } satisfies DashboardMetrics;
+      };
     },
-    refetchInterval: 30000, // Refresh every 30 seconds
-    staleTime: 10000, // Consider data fresh for 10 seconds
+    refetchInterval: 30000,
+    staleTime: 10000,
   });
 
   // Set up realtime subscription for live updates
