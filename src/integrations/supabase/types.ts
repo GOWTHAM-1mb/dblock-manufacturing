@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone_number: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone_number?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone_number?: string | null
+        }
+        Relationships: []
+      }
       order_comments: {
         Row: {
           comment: string
@@ -222,6 +249,33 @@ export type Database = {
           status?: string | null
           step_file_path?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          avatar_url: string | null
+          company: string
+          created_at: string
+          feedback: string
+          id: string
+          name: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          company: string
+          created_at?: string
+          feedback: string
+          id?: string
+          name: string
+        }
+        Update: {
+          avatar_url?: string | null
+          company?: string
+          created_at?: string
+          feedback?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }
