@@ -9,6 +9,121 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      order_comments: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          order_id: string
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          id?: string
+          order_id: string
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          order_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_comments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_tasks: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_completed: boolean | null
+          order_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_completed?: boolean | null
+          order_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_completed?: boolean | null
+          order_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_tasks_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          delivery_date: string
+          drawing_file_path: string | null
+          id: string
+          material: string
+          part_name: string
+          price: number
+          quantity: number
+          status: string
+          step_file_path: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delivery_date: string
+          drawing_file_path?: string | null
+          id?: string
+          material: string
+          part_name: string
+          price: number
+          quantity: number
+          status?: string
+          step_file_path?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delivery_date?: string
+          drawing_file_path?: string | null
+          id?: string
+          material?: string
+          part_name?: string
+          price?: number
+          quantity?: number
+          status?: string
+          step_file_path?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null
