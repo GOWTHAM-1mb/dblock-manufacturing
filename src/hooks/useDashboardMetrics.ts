@@ -17,9 +17,9 @@ const defaultMetrics: DashboardMetricsData = {
 };
 
 export const useDashboardMetrics = () => {
-  return useQuery({
+  return useQuery<DashboardMetricsData>({
     queryKey: ['dashboard-metrics'],
-    queryFn: async (): Promise<DashboardMetricsData> => {
+    queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 

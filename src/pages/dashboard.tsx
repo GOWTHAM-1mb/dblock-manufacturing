@@ -1,5 +1,4 @@
 
-import { useEffect, useState } from "react";
 import { AuthenticatedLayout } from "@/components/AuthenticatedLayout";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +18,7 @@ const Dashboard = () => {
   const [userName, setUserName] = useState("");
   const { data: metrics } = useDashboardMetrics();
 
-  const { data: profile } = useQuery<Profile | null, Error>({
+  const { data: profile } = useQuery<Profile | null>({
     queryKey: ['profile'],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();

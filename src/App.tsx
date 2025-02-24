@@ -9,7 +9,7 @@ import Index from "@/pages/Index";
 import Signup from "@/pages/signup";
 import { supabase } from "./integrations/supabase/client";
 import { AccountSettings } from "./pages/account-settings";
-import { Dashboard } from "./pages/dashboard";
+import Dashboard from "./pages/dashboard";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 export default function App() {
