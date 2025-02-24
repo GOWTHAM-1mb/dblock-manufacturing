@@ -44,6 +44,7 @@ const App: React.FC = () => {
               <Route path="/orders" element={<ViewOrders />} />
               <Route path="/orders/:orderId" element={<OrderDetails />} />
               <Route path="/account-settings" element={<AccountSettings />} />
+              <Route path="/settings" element={<Navigate to="/account-settings" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
