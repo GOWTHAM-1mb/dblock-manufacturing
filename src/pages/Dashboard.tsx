@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { AuthenticatedLayout } from "@/components/AuthenticatedLayout";
 import { useToast } from "@/components/ui/use-toast";
@@ -7,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SearchBar } from "@/components/dashboard/SearchBar";
 import { DashboardMetrics } from "@/components/dashboard/DashboardMetrics";
 import { useDashboardMetrics } from "@/hooks/useDashboardMetrics";
+import { Button } from "@/components/ui/button";
+import { seedDummyData } from "@/seed-data";
 
 interface Profile {
   full_name: string | null;
@@ -18,6 +19,27 @@ const Dashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [userName, setUserName] = useState("");
   const { data: metrics, isLoading } = useDashboardMetrics();
+
+  const handleSeedData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
+      await seedDummyData(user.id);
+      await queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
+      
+      toast({
+        title: "Success",
+        description: "Dummy data has been added successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to add dummy data: " + error.message,
+        variant: "destructive",
+      });
+    }
+  };
 
   const { data: profile } = useQuery<Profile | null>({
     queryKey: ['profile'],
@@ -89,7 +111,16 @@ const Dashboard = () => {
           <h1 className="text-2xl font-bold text-navy">
             Welcome, {userName}
           </h1>
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          <div className="flex gap-4">
+            <SearchBar value={searchQuery} onChange={setSearchQuery} />
+            <Button 
+              variant="outline" 
+              onClick={handleSeedData}
+              className="whitespace-nowrap"
+            >
+              Add Test Data
+            </Button>
+          </div>
         </div>
         <DashboardMetrics metrics={metrics || defaultMetrics} />
       </div>

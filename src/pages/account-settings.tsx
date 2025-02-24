@@ -1,4 +1,3 @@
-
 import { AuthenticatedLayout } from "@/components/AuthenticatedLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,8 +22,8 @@ interface Address {
 interface UserProfile {
   full_name: string;
   company_name: string;
-  shipping_address: Address;
-  billing_address: Address;
+  shipping_address: Address | null;
+  billing_address: Address | null;
   created_at: string;
 }
 
@@ -47,7 +46,16 @@ export const AccountSettings = () => {
             .single();
 
           if (error) throw error;
-          setProfile(profileData);
+          
+          const formattedProfile: UserProfile = {
+            full_name: profileData.full_name,
+            company_name: profileData.company_name,
+            shipping_address: profileData.shipping_address ? JSON.parse(JSON.stringify(profileData.shipping_address)) : null,
+            billing_address: profileData.billing_address ? JSON.parse(JSON.stringify(profileData.billing_address)) : null,
+            created_at: profileData.created_at,
+          };
+          
+          setProfile(formattedProfile);
         }
       } catch (error: any) {
         console.error('Error fetching user data:', error);
@@ -84,9 +92,10 @@ export const AccountSettings = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No user found');
 
-      const updates = type === 'shipping' 
-        ? { shipping_address: address }
-        : { billing_address: address };
+      const updates = {
+        [type === 'shipping' ? 'shipping_address' : 'billing_address']: address,
+        updated_at: new Date().toISOString()
+      };
 
       const { error } = await supabase
         .from('profiles')
@@ -95,10 +104,13 @@ export const AccountSettings = () => {
 
       if (error) throw error;
 
-      setProfile(prev => prev ? {
-        ...prev,
-        [type === 'shipping' ? 'shipping_address' : 'billing_address']: address
-      } : null);
+      setProfile(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          [type === 'shipping' ? 'shipping_address' : 'billing_address']: address
+        };
+      });
 
       toast({
         title: "Success",
