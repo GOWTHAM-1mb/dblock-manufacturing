@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Upload, Quote, Package, Check, Search } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface DashboardMetrics {
   totalRfqs: number;
@@ -19,6 +19,7 @@ interface DashboardMetrics {
 const Dashboard = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [userName, setUserName] = useState("");
 
@@ -36,17 +37,21 @@ const Dashboard = () => {
         .single();
 
       if (error) throw error;
+      
+      if (data) {
+        setUserName(data.full_name || '');
+      }
+      
       return data;
     },
-    onSuccess: (data) => {
-      setUserName(data?.full_name || '');
-    },
-    onError: () => {
-      toast({
-        title: "Error",
-        description: "Failed to load user profile",
-        variant: "destructive",
-      });
+    meta: {
+      errorCallback: () => {
+        toast({
+          title: "Error",
+          description: "Failed to load user profile",
+          variant: "destructive",
+        });
+      }
     }
   });
 
@@ -97,7 +102,7 @@ const Dashboard = () => {
         activeQuotes: quotesResult.count || 0,
         ordersInProgress: inProgressResult.count || 0,
         completedOrders: completedResult.count || 0
-      };
+      } satisfies DashboardMetrics;
     },
     refetchInterval: 30000, // Refresh every 30 seconds
     staleTime: 10000, // Consider data fresh for 10 seconds
@@ -112,22 +117,21 @@ const Dashboard = () => {
         schema: 'public',
         table: 'orders'
       }, () => {
-        // Invalidate the metrics query to trigger a refresh
-        void queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
+        queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
       })
       .on('postgres_changes', { 
         event: '*', 
         schema: 'public',
         table: 'quotes'
       }, () => {
-        void queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
+        queryClient.invalidateQueries({ queryKey: ['dashboard-metrics'] });
       })
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      void supabase.removeChannel(channel);
     };
-  }, []);
+  }, [queryClient]);
 
   const MetricCard = ({ 
     title, 
