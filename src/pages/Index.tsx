@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { signIn } from "@/lib/auth";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -111,9 +111,9 @@ const Index = () => {
                 <input type="checkbox" className="rounded border-gray-300 text-navy focus:ring-navy" />
                 <span className="text-sm text-gray-600">Remember me</span>
               </label>
-              <a href="#" className="text-sm text-navy hover:underline">
+              <Link to="/forgot-password" className="text-sm text-navy hover:underline">
                 Forgot password?
-              </a>
+              </Link>
             </div>
 
             <Button
@@ -127,9 +127,9 @@ const Index = () => {
 
           <div className="text-center text-sm text-gray-600">
             Don't have an account?{" "}
-            <a href="/signup" className="text-navy hover:underline font-medium">
+            <Link to="/signup" className="text-navy hover:underline font-medium">
               Sign up
-            </a>
+            </Link>
           </div>
         </div>
       </div>

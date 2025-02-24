@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export type SignUpData = {
@@ -39,7 +38,6 @@ export const signIn = async ({ email, password }: SignInData) => {
     });
 
     if (error) {
-      // Convert the email_not_confirmed error to a more user-friendly message
       if (error.message.includes('Email not confirmed')) {
         throw new Error('Please check your email for the confirmation link.');
       }
@@ -54,6 +52,16 @@ export const signIn = async ({ email, password }: SignInData) => {
 
 export const signOut = async () => {
   const { error } = await supabase.auth.signOut();
+  if (error) {
+    throw error;
+  }
+};
+
+export const resetPassword = async (email: string) => {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/auth/reset-password`,
+  });
+
   if (error) {
     throw error;
   }
