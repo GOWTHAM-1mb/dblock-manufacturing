@@ -66,27 +66,27 @@ const Dashboard = () => {
       // Fetch total RFQs
       const rfqsResult = await supabase
         .from("rfqs")
-        .select("*", { count: 'exact', head: true })
+        .select("*", { count: 'exact' })
         .eq("user_id", user.id);
       
       // Fetch active quotes
       const quotesResult = await supabase
         .from("quotes")
-        .select("*", { count: 'exact', head: true })
+        .select("*", { count: 'exact' })
         .eq("user_id", user.id)
         .in("status", ["pending", "quoted"]);
 
       // Fetch orders in progress
       const inProgressResult = await supabase
         .from("orders")
-        .select("*", { count: 'exact', head: true })
+        .select("*", { count: 'exact' })
         .eq("user_id", user.id)
         .in("status", ["pending", "working"]);
 
       // Fetch completed orders
       const completedResult = await supabase
         .from("orders")
-        .select("*", { count: 'exact', head: true })
+        .select("*", { count: 'exact' })
         .eq("user_id", user.id)
         .eq("status", "complete");
 
