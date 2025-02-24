@@ -1,7 +1,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { DashboardMetricsData } from "@/components/dashboard/DashboardMetrics";
+
+export interface DashboardMetricsData {
+  totalRfqs: number;
+  activeQuotes: number;
+  ordersInProgress: number;
+  completedOrders: number;
+}
 
 const defaultMetrics: DashboardMetricsData = {
   totalRfqs: 0,
@@ -13,31 +19,31 @@ const defaultMetrics: DashboardMetricsData = {
 export const useDashboardMetrics = () => {
   return useQuery({
     queryKey: ['dashboard-metrics'],
-    queryFn: async () => {
+    queryFn: async (): Promise<DashboardMetricsData> => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
       const [rfqsResult, quotesResult, inProgressResult, completedResult] = await Promise.all([
         supabase
           .from("rfqs")
-          .select("id", { count: 'exact' })
+          .select("id", { count: 'exact', head: true })
           .eq("user_id", user.id),
         
         supabase
           .from("quotes")
-          .select("id", { count: 'exact' })
+          .select("id", { count: 'exact', head: true })
           .eq("user_id", user.id)
           .in("status", ["pending", "quoted"]),
 
         supabase
           .from("orders")
-          .select("id", { count: 'exact' })
+          .select("id", { count: 'exact', head: true })
           .eq("user_id", user.id)
           .in("status", ["pending", "working"]),
 
         supabase
           .from("orders")
-          .select("id", { count: 'exact' })
+          .select("id", { count: 'exact', head: true })
           .eq("user_id", user.id)
           .eq("status", "complete")
       ]);
@@ -49,8 +55,6 @@ export const useDashboardMetrics = () => {
         completedOrders: completedResult.count || 0
       };
     },
-    refetchInterval: 30000,
-    staleTime: 10000,
     initialData: defaultMetrics
   });
 };
