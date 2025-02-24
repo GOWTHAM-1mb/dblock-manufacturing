@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { ArrowRight, Menu, X, Upload, Clock, Zap, Bot, ChevronRight } from "lucide-react";
+import { ArrowRight, Menu, X, Upload, Clock, Zap, Bot, ChevronRight, Quote } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Landing() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -233,6 +234,70 @@ export default function Landing() {
                   </div>
                 )}
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20 bg-gray-50">
+        <div className="container mx-auto max-w-6xl px-4">
+          <h2 className="text-3xl font-bold text-navy text-center mb-12">
+            What Our Clients Say
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "John Smith",
+                role: "Lead Engineer",
+                company: "TechCorp Industries",
+                testimonial: "The precision and speed of delivery exceeded our expectations. Perfect for our prototyping needs.",
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=John"
+              },
+              {
+                name: "Sarah Johnson",
+                role: "Product Manager",
+                company: "InnovateMech",
+                testimonial: "Fast turnaround times and exceptional quality. Their CNC machining service has become integral to our development process.",
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+              },
+              {
+                name: "Michael Chen",
+                role: "R&D Director",
+                company: "NextGen Robotics",
+                testimonial: "Consistent quality and reliable delivery times. They've helped us streamline our prototyping pipeline.",
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael"
+              }
+            ].map((testimonial, index) => (
+              <Card key={index} className="bg-white">
+                <CardContent className="pt-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <img
+                        src={testimonial.avatar}
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full bg-gray-100"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="relative">
+                        <Quote className="absolute -left-2 -top-2 w-8 h-8 text-primary/10" />
+                        <p className="text-gray-600 italic relative z-10 pl-4">
+                          "{testimonial.testimonial}"
+                        </p>
+                      </div>
+                      <div className="mt-4 pl-4">
+                        <p className="text-sm font-semibold text-navy">
+                          {testimonial.name}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {testimonial.role}, {testimonial.company}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
