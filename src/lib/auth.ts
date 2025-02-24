@@ -20,6 +20,7 @@ export const signUp = async ({ email, password, fullName }: SignUpData) => {
       data: {
         full_name: fullName,
       },
+      emailRedirectTo: `${window.location.origin}/auth/callback`,
     },
   });
 
@@ -31,16 +32,24 @@ export const signUp = async ({ email, password, fullName }: SignUpData) => {
 };
 
 export const signIn = async ({ email, password }: SignInData) => {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) {
+    if (error) {
+      // Convert the email_not_confirmed error to a more user-friendly message
+      if (error.message.includes('Email not confirmed')) {
+        throw new Error('Please check your email for the confirmation link.');
+      }
+      throw error;
+    }
+
+    return data;
+  } catch (error: any) {
     throw error;
   }
-
-  return data;
 };
 
 export const signOut = async () => {
