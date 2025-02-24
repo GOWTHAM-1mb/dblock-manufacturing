@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Index from "./pages/Index";
 import Signup from "./pages/signup";
 import ForgotPassword from "./pages/forgot-password";
@@ -37,6 +37,7 @@ const App: React.FC = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/submit-rfq" element={<SubmitRFQ />} />
               <Route path="/view-quotes" element={<ViewQuotes />} />
+              <Route path="/quotes" element={<Navigate to="/view-quotes" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
