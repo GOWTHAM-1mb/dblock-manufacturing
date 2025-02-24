@@ -52,13 +52,15 @@ export function AppSidebar() {
   return (
     <aside
       className={cn(
-        "flex flex-col h-screen bg-gray-50 border-r border-gray-200 transition-all duration-300",
+        "flex flex-col h-screen bg-gradient-to-br from-white to-gray-50 dark:from-navy-light dark:to-navy border-r border-gray-200/50 transition-all duration-300 relative group",
         isCollapsed ? "w-16" : "w-64"
       )}
     >
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200/50 bg-white/50 backdrop-blur-sm">
         {!isCollapsed && (
-          <span className="text-lg font-semibold text-navy">D Block</span>
+          <span className="text-lg font-semibold bg-gradient-to-r from-navy to-primary bg-clip-text text-transparent">
+            D Block
+          </span>
         )}
         <Button
           variant="ghost"
@@ -79,14 +81,17 @@ export function AppSidebar() {
                 <Link
                   to={item.href}
                   className={cn(
-                    "flex items-center space-x-3 px-3 py-2 rounded-md transition-colors relative",
+                    "flex items-center space-x-3 px-3 py-2 rounded-md transition-all duration-300 relative group/item",
                     isActive
                       ? "text-primary bg-primary/10"
-                      : "text-gray-700 hover:bg-gray-100",
+                      : "text-gray-700 hover:bg-gray-100/50 dark:text-gray-200 dark:hover:bg-white/5",
                     isCollapsed && "justify-center"
                   )}
                 >
-                  <item.icon className="h-5 w-5 shrink-0" />
+                  <div className="relative">
+                    <div className="absolute -inset-2 bg-primary/10 rounded-full blur-md transition-opacity duration-300 opacity-0 group-hover/item:opacity-50" />
+                    <item.icon className="h-5 w-5 shrink-0 relative z-10" />
+                  </div>
                   {!isCollapsed && <span>{item.label}</span>}
                   {isActive && (
                     <div className="absolute left-0 top-0 h-full w-1 bg-primary rounded-r-md" />
@@ -98,16 +103,19 @@ export function AppSidebar() {
         </ul>
       </nav>
 
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200/50 bg-white/50 backdrop-blur-sm">
         <Button
           variant="ghost"
           className={cn(
-            "w-full text-gray-700 hover:bg-gray-100",
+            "w-full text-gray-700 hover:bg-gray-100/50 dark:text-gray-200 dark:hover:bg-white/5 group/logout",
             isCollapsed && "justify-center"
           )}
           onClick={handleLogout}
         >
-          <LogOut className="h-5 w-5 shrink-0" />
+          <div className="relative">
+            <div className="absolute -inset-2 bg-red-500/10 rounded-full blur-md transition-opacity duration-300 opacity-0 group-hover/logout:opacity-50" />
+            <LogOut className="h-5 w-5 shrink-0 relative z-10" />
+          </div>
           {!isCollapsed && <span className="ml-3">Logout</span>}
         </Button>
       </div>
