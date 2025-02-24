@@ -30,6 +30,45 @@ export type Database = {
         }
         Relationships: []
       }
+      rfqs: {
+        Row: {
+          created_at: string
+          drawing_file_path: string
+          expected_delivery_date: string
+          id: string
+          material: string
+          quantity: number
+          special_instructions: string | null
+          status: string | null
+          step_file_path: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          drawing_file_path: string
+          expected_delivery_date: string
+          id?: string
+          material: string
+          quantity: number
+          special_instructions?: string | null
+          status?: string | null
+          step_file_path: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          drawing_file_path?: string
+          expected_delivery_date?: string
+          id?: string
+          material?: string
+          quantity?: number
+          special_instructions?: string | null
+          status?: string | null
+          step_file_path?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

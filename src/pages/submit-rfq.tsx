@@ -97,10 +97,11 @@ const SubmitRFQ = () => {
           material,
           quantity,
           special_instructions: instructions,
-          expected_delivery_date: deliveryDate.toISOString(),
+          expected_delivery_date: deliveryDate.toISOString().split('T')[0], // Convert to YYYY-MM-DD format
           step_file_path: stepFilePath,
           drawing_file_path: drawingFilePath,
-        });
+          status: 'pending'
+        } satisfies Record<string, unknown>);
 
       if (rfqError) throw rfqError;
 
