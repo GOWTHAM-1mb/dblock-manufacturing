@@ -1,5 +1,5 @@
 
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import Landing from "@/pages/Landing";
 import { useEffect, useState } from 'react';
@@ -16,9 +16,12 @@ export default function App() {
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Index />} />
         <Route path="/signup" element={<Signup />} />
+
+        {/* Protected Routes */}
         <Route
           path="/dashboard"
           element={
@@ -43,6 +46,25 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/quotes"
+          element={
+            <ProtectedRoute>
+              <Navigate to="/dashboard" replace />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Navigate to="/dashboard" replace />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Catch all route - 404 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster />
     </Router>
