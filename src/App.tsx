@@ -9,6 +9,7 @@ import Signup from "./pages/signup";
 import ForgotPassword from "./pages/forgot-password";
 import Dashboard from "./pages/dashboard";
 import SubmitRFQ from "./pages/submit-rfq";
+import ViewQuotes from "./pages/view-quotes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +26,7 @@ const App = () => (
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/submit-rfq" element={<SubmitRFQ />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/view-quotes" element={<ViewQuotes />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

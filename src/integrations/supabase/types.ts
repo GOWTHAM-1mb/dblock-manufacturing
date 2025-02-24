@@ -30,6 +30,35 @@ export type Database = {
         }
         Relationships: []
       }
+      quotes: {
+        Row: {
+          created_at: string
+          id: string
+          quoted_price: number
+          rfq_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          quoted_price: number
+          rfq_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          quoted_price?: number
+          rfq_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_rfq_id_fkey"
+            columns: ["rfq_id"]
+            isOneToOne: false
+            referencedRelation: "rfqs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rfqs: {
         Row: {
           created_at: string
