@@ -60,38 +60,41 @@ const Dashboard = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No user found");
 
-      // Fetch total RFQs
-      const { count: totalRfqs } = await supabase
-        .from("rfqs")
-        .select("*", { count: 'exact' })
-        .eq("user_id", user.id);
+      // Using explicit type annotations for count queries
+      type CountQueryResult = { count: number | null };
 
+      // Fetch total RFQs
+      const rfqsResult = await supabase
+        .from("rfqs")
+        .select("*", { count: 'exact', head: true })
+        .eq("user_id", user.id);
+      
       // Fetch active quotes
-      const { count: activeQuotes } = await supabase
+      const quotesResult = await supabase
         .from("quotes")
-        .select("*", { count: 'exact' })
+        .select("*", { count: 'exact', head: true })
         .eq("user_id", user.id)
         .in("status", ["pending", "quoted"]);
 
       // Fetch orders in progress
-      const { count: ordersInProgress } = await supabase
+      const inProgressResult = await supabase
         .from("orders")
-        .select("*", { count: 'exact' })
+        .select("*", { count: 'exact', head: true })
         .eq("user_id", user.id)
         .in("status", ["pending", "working"]);
 
       // Fetch completed orders
-      const { count: completedOrders } = await supabase
+      const completedResult = await supabase
         .from("orders")
-        .select("*", { count: 'exact' })
+        .select("*", { count: 'exact', head: true })
         .eq("user_id", user.id)
         .eq("status", "complete");
 
       setMetrics({
-        totalRfqs: totalRfqs || 0,
-        activeQuotes: activeQuotes || 0,
-        ordersInProgress: ordersInProgress || 0,
-        completedOrders: completedOrders || 0
+        totalRfqs: rfqsResult.count || 0,
+        activeQuotes: quotesResult.count || 0,
+        ordersInProgress: inProgressResult.count || 0,
+        completedOrders: completedResult.count || 0
       });
     } catch (error: any) {
       toast({
@@ -196,8 +199,6 @@ const Dashboard = () => {
             onClick={() => navigate("/orders?status=complete")}
           />
         </div>
-
-        {/* Recent activity tables will be implemented in the next step */}
       </div>
     </AuthenticatedLayout>
   );
