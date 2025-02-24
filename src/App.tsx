@@ -69,7 +69,7 @@ export default function App() {
           path="/orders/:orderId"
           element={
             <ProtectedRoute>
-              <Navigate to="/orders" replace />
+              <ViewOrders />
             </ProtectedRoute>
           }
         />
